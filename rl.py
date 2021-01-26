@@ -51,7 +51,7 @@ if __name__ == "__main__":
     # config
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
-    num_episodes = 2000
+    num_episodes = 1
     batch_size = 32
     initial_investment = 5000
 
@@ -118,6 +118,10 @@ if __name__ == "__main__":
         # plot losses
         plt.plot(agent.model.losses)
         plt.show()
+        plt.savefig(f"{models_folder}/model_losses.png")
 
     # save portfolio value for each episode
     np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)
+    plt.plot(portfolio_value)
+    plt.show()
+    plt.savefig(f"{rewards_folder}/portfolio_{args.mode}.png")

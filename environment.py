@@ -94,6 +94,7 @@ class MultiStockEnv:
         obs = np.empty(self.state_dim)
         obs[: self.n_stock] = self.stock_owned
         obs[self.n_stock : 2 * self.n_stock] = self.stock_price
+        # max from past 10 days, min, volatility, volume traded, ideas?
         obs[-1] = self.cash_in_hand
         return obs
 
