@@ -53,7 +53,7 @@ if __name__ == "__main__":
     rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
     batch_size = 32
-    initial_investment = 20000
+    initial_investment = 5000
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
