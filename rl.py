@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-m", "--mode", type=str, required=True, help='either "train" or "test"'
+        "-m", "--mode", type=str, required=True, help='either "train" or "test" or "random"'
     )
     args = parser.parse_args()
 
@@ -80,6 +80,13 @@ if __name__ == "__main__":
 
     # store the final value of the portfolio (end of episode)
     portfolio_value = []
+    
+    if args.mode == "random":
+        # remake the env with test data
+        env = MultiStockEnv(test_data, initial_investment)
+
+        # set epsilon to 1 so it's always in exploration
+        agent.epsilon = 1
 
     if args.mode == "test":
         # then load the previous scaler
