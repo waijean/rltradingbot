@@ -7,10 +7,9 @@ import pickle
 
 from sklearn.preprocessing import StandardScaler
 
-
-# Let's use AAPL (Apple), MSI (Motorola), SBUX (Starbucks)
 from agent import DQNAgent
 from environment import MultiStockEnv
+from utils import maybe_make_dir, get_data
 
 
 def get_scaler(env):
