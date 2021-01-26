@@ -46,7 +46,9 @@ class MultiStockEnv:
         # 0 = sell
         # 1 = hold
         # 2 = buy
-        self.action_list = list(map(list, itertools.product([0, 1, 2], repeat=self.n_stock)))
+        self.action_list = list(
+            map(list, itertools.product([0, 1, 2], repeat=self.n_stock))
+        )
 
         # calculate size of state
         self.state_dim = self.n_stock * 2 + 1
@@ -83,15 +85,15 @@ class MultiStockEnv:
         done = self.cur_step == self.n_step - 1
 
         # store the current value of the portfolio here
-        info = {'cur_val': cur_val}
+        info = {"cur_val": cur_val}
 
         # conform to the Gym API
         return self._get_obs(), reward, done, info
 
     def _get_obs(self):
         obs = np.empty(self.state_dim)
-        obs[:self.n_stock] = self.stock_owned
-        obs[self.n_stock:2 * self.n_stock] = self.stock_price
+        obs[: self.n_stock] = self.stock_owned
+        obs[self.n_stock : 2 * self.n_stock] = self.stock_price
         obs[-1] = self.cash_in_hand
         return obs
 

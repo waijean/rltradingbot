@@ -1,10 +1,8 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from datetime import datetime
 import argparse
-import os
 import pickle
 
 from sklearn.preprocessing import StandardScaler
@@ -13,16 +11,6 @@ from sklearn.preprocessing import StandardScaler
 # Let's use AAPL (Apple), MSI (Motorola), SBUX (Starbucks)
 from agent import DQNAgent
 from environment import MultiStockEnv
-
-
-def get_data():
-    # returns a T x 3 list of stock prices
-    # each row is a different stock
-    # 0 = AAPL
-    # 1 = MSI
-    # 2 = SBUX
-    df = pd.read_csv('../tf2.0/aapl_msi_sbux.csv')
-    return df.values
 
 
 def get_scaler(env):
@@ -42,11 +30,6 @@ def get_scaler(env):
     return scaler
 
 
-def maybe_make_dir(directory):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-
 def play_one_episode(agent, env, is_train):
     # note: after transforming states are already 1xD
     state = env.reset()
@@ -57,25 +40,26 @@ def play_one_episode(agent, env, is_train):
         action = agent.act(state)
         next_state, reward, done, info = env.step(action)
         next_state = scaler.transform([next_state])
-        if is_train == 'train':
+        if is_train == "train":
             agent.train(state, action, reward, next_state, done)
         state = next_state
 
-    return info['cur_val']
+    return info["cur_val"]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # config
-    models_folder = 'linear_rl_trader_models'
-    rewards_folder = 'linear_rl_trader_rewards'
+    models_folder = "linear_rl_trader_models"
+    rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
     batch_size = 32
     initial_investment = 20000
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--mode', type=str, required=True,
-                        help='either "train" or "test"')
+    parser.add_argument(
+        "-m", "--mode", type=str, required=True, help='either "train" or "test"'
+    )
     args = parser.parse_args()
 
     maybe_make_dir(models_folder)
@@ -98,9 +82,9 @@ if __name__ == '__main__':
     # store the final value of the portfolio (end of episode)
     portfolio_value = []
 
-    if args.mode == 'test':
+    if args.mode == "test":
         # then load the previous scaler
-        with open(f'{models_folder}/scaler.pkl', 'rb') as f:
+        with open(f"{models_folder}/scaler.pkl", "rb") as f:
             scaler = pickle.load(f)
 
         # remake the env with test data
@@ -111,23 +95,25 @@ if __name__ == '__main__':
         agent.epsilon = 0.01
 
         # load trained weights
-        agent.load(f'{models_folder}/linear.npz')
+        agent.load(f"{models_folder}/linear.npz")
 
     # play the game num_episodes times
     for e in range(num_episodes):
         t0 = datetime.now()
         val = play_one_episode(agent, env, args.mode)
         dt = datetime.now() - t0
-        print(f"episode: {e + 1}/{num_episodes}, episode end value: {val:.2f}, duration: {dt}")
+        print(
+            f"episode: {e + 1}/{num_episodes}, episode end value: {val:.2f}, duration: {dt}"
+        )
         portfolio_value.append(val)  # append episode end portfolio value
 
     # save the weights when we are done
-    if args.mode == 'train':
+    if args.mode == "train":
         # save the DQN
-        agent.save(f'{models_folder}/linear.npz')
+        agent.save(f"{models_folder}/linear.npz")
 
         # save the scaler
-        with open(f'{models_folder}/scaler.pkl', 'wb') as f:
+        with open(f"{models_folder}/scaler.pkl", "wb") as f:
             pickle.dump(scaler, f)
 
         # plot losses
@@ -135,4 +121,4 @@ if __name__ == '__main__':
         plt.show()
 
     # save portfolio value for each episode
-    np.save(f'{rewards_folder}/{args.mode}.npy', portfolio_value)
+    np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)

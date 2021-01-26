@@ -16,12 +16,12 @@ class LinearModel:
 
     def predict(self, X):
         # make sure X is N x D
-        assert (len(X.shape) == 2)
+        assert len(X.shape) == 2
         return X.dot(self.W) + self.b
 
     def sgd(self, X, Y, learning_rate=0.01, momentum=0.9):
         # make sure X is N x D
-        assert (len(X.shape) == 2)
+        assert len(X.shape) == 2
 
         # the loss values are 2-D
         # normally we would divide by N only
@@ -49,13 +49,11 @@ class LinearModel:
 
     def load_weights(self, filepath):
         npz = np.load(filepath)
-        self.W = npz['W']
-        self.b = npz['b']
+        self.W = npz["W"]
+        self.b = npz["b"]
 
     def save_weights(self, filepath):
         np.savez(filepath, W=self.W, b=self.b)
-
-
 
 
 class DQNAgent(object):
@@ -78,7 +76,9 @@ class DQNAgent(object):
         if done:
             target = reward
         else:
-            target = reward + self.gamma * np.amax(self.model.predict(next_state), axis=1)
+            target = reward + self.gamma * np.amax(
+                self.model.predict(next_state), axis=1
+            )
 
         target_full = self.model.predict(state)
         target_full[0, action] = target
