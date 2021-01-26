@@ -28,7 +28,6 @@ def get_scaler(env):
     scaler.fit(states)
     return scaler
 
-
 def play_one_episode(agent, env, is_train):
     # note: after transforming states are already 1xD
     state = env.reset()
@@ -43,7 +42,7 @@ def play_one_episode(agent, env, is_train):
             agent.train(state, action, reward, next_state, done)
         state = next_state
 
-    return info["cur_val"]
+    return info
 
 
 if __name__ == "__main__":
@@ -78,8 +77,9 @@ if __name__ == "__main__":
     agent = DQNAgent(state_size, action_size)
     scaler = get_scaler(env)
 
-    # store the final value of the portfolio (end of episode)
-    portfolio_value = []
+    # store the final value of the portfolio (end of episode) and action counts
+    portfolio_values = []
+    action_counts = np.empty((num_episodes, env.n_actions))
 
     if args.mode == "test":
         # then load the previous scaler
@@ -99,12 +99,14 @@ if __name__ == "__main__":
     # play the game num_episodes times
     for e in range(num_episodes):
         t0 = datetime.now()
-        val = play_one_episode(agent, env, args.mode)
+        info = play_one_episode(agent, env, args.mode)
         dt = datetime.now() - t0
+        portfolio_value = info['cur_val']
         print(
-            f"episode: {e + 1}/{num_episodes}, episode end value: {val:.2f}, duration: {dt}"
+            f"episode: {e + 1}/{num_episodes}, episode end value: {portfolio_value:.2f}, duration: {dt}"
         )
-        portfolio_value.append(val)  # append episode end portfolio value
+        portfolio_values.append(portfolio_value)  # append episode end portfolio value
+        action_counts[e] = info['action_counts']
 
     # save the weights when we are done
     if args.mode == "train":
@@ -120,4 +122,5 @@ if __name__ == "__main__":
         plt.show()
 
     # save portfolio value for each episode
-    np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)
+    np.save(f"{rewards_folder}/{args.mode}_pf.npy", portfolio_values)
+    np.save(f"{rewards_folder}/{args.mode}_act_cnt.npy", action_counts)
