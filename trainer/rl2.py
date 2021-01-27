@@ -115,13 +115,13 @@ def run(mode, episodes):
         agent.save(f"{job_dir}/linear.csv")
 
         # save the scaler
-        with open(f"{job_dir}/scaler.pkl", "wb") as f:
-            pickle.dump(scaler, f)
+        #with open(f"{job_dir}/scaler.pkl", "wb") as f:
+        #    pickle.dump(scaler, f)
 
         # plot losses
         plt.plot(agent.model.losses)
         plt.title('Model Losses')
-        plt.show()
+        #plt.show()
         plt.savefig(f"{job_dir}/model_losses.png")
 
     # save portfolio value for each episode
