@@ -11,7 +11,12 @@ from sklearn.preprocessing import StandardScaler
 from agent import DQNAgent
 from environment import MultiStockEnv
 from utils import maybe_make_dir, get_data
-import seaborn as sns
+
+# task.py arguments
+epsilon_decay=None
+learning_rate=None
+gamma=None
+momentum=None
 
 
 def get_scaler(env):
@@ -31,7 +36,7 @@ def get_scaler(env):
     return scaler
 
 
-def play_one_episode(agent, env, is_train):
+def play_one_episode(agent, env, is_train, scaler):
     # note: after transforming states are already 1xD
     state = env.reset()
     state = scaler.transform([state])
@@ -48,35 +53,13 @@ def play_one_episode(agent, env, is_train):
     return info["cur_val"]
 
 
-if __name__ == "__main__":
-
+def run(mode, episodes):
     # config
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
     #num_episodes = 100
-    batch_size = 32
+    #batch_size = 32
     initial_investment = 20000
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-m", "--mode", type=str, required=True, help='either "train" or "test"'
-    )
-    parser.add_argument(
-        "-e", "--epsilon-decay", type=float, required=True, help='rate of epsilon decay'
-    )
-    parser.add_argument(
-        "-l", "--learnrate", type=float, required=True, help='learning rate'
-    )
-    parser.add_argument(
-        "-t", "--momentum", type=float, required=True, help='momentum'
-    )
-    parser.add_argument(
-        "-g", "--gamma", type=float, required=True, help='gamma'
-    )
-    parser.add_argument(
-        "-n", "--episodes", type=int, required=True, help='number of episodes'
-    )
-    args = parser.parse_args()
 
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
@@ -92,14 +75,13 @@ if __name__ == "__main__":
     env = MultiStockEnv(train_data, initial_investment)
     state_size = env.state_dim
     action_size = len(env.action_space)
-    agent = DQNAgent(state_size, action_size, args.gamma, args.epsilon_decay, args.momentum, args.learnrate)
+    agent = DQNAgent(state_size, action_size, gamma, epsilon_decay, momentum, learning_rate)
     scaler = get_scaler(env)
-    num_episodes = args.episodes
-
+    num_episodes = episodes
     # store the final value of the portfolio (end of episode)
     portfolio_value = []
 
-    if args.mode == "test":
+    if mode == "test":
         # then load the previous scaler
         with open(f"{models_folder}/scaler.pkl", "rb") as f:
             scaler = pickle.load(f)
@@ -117,7 +99,7 @@ if __name__ == "__main__":
     # play the game num_episodes times
     for e in range(num_episodes):
         t0 = datetime.now()
-        val = play_one_episode(agent, env, args.mode)
+        val = play_one_episode(agent, env, mode, scaler)
         dt = datetime.now() - t0
         print(
             f"episode: {e + 1}/{num_episodes}, episode end value: {val:.2f}, duration: {dt}"
@@ -125,7 +107,7 @@ if __name__ == "__main__":
         portfolio_value.append(val)  # append episode end portfolio value
 
     # save the weights when we are done
-    if args.mode == "train":
+    if mode == "train":
         # save the DQN
         agent.save(f"{models_folder}/linear.npz")
 
@@ -137,18 +119,17 @@ if __name__ == "__main__":
         plt.plot(agent.model.losses)
         plt.title('Model Losses')
         plt.show()
-        #plt.savefig(f"{models_folder}/model_losses.png")
+        # plt.savefig(f"{models_folder}/model_losses.png")
 
     # save portfolio value for each episode
-    np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)
-
+    np.save(f"{rewards_folder}/{mode}.npy", portfolio_value)
     plt.plot(portfolio_value)
     plt.title('Portfolio value of episodes')
     plt.show()
-    plt.savefig(f"{rewards_folder}/portfolio_{args.mode}_e{args.epsilon_decay}_l{args.learnrate}"
-                f"_m{args.momentum}_g{args.gamma}.png")
+    plt.savefig(f"{rewards_folder}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
+                f"_m{momentum}_g{gamma}.png")
 
     plt.hist(portfolio_value, bins=10)
     plt.show()
-    plt.savefig(f"{rewards_folder}/portfoliohist_{args.mode}_e{args.epsilon_decay}_l{args.learnrate}"
-                f"_m{args.momentum}_g{args.gamma}.png")
+    plt.savefig(f"{rewards_folder}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
+                f"_m{momentum}_g{gamma}.png")

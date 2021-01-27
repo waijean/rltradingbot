@@ -2,7 +2,7 @@ trainingInput:
   scaleTier: BASIC
   hyperparameters:
     maxTrials: 40
-    maxParallelTrials: 5
+    maxParallelTrials: 1
     enableTrialEarlyStopping: True
     goal: MINIMIZE
     hyperparameterMetricTag: mse
