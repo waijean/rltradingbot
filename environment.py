@@ -143,7 +143,6 @@ class MultiStockEnv:
         # determine which stocks to buy or sell
 
         action_idx = [ [] for _ in range(self.n_actions) ]
-        # [[1],[0],[2],[],[]]
 
         for i, action_code in enumerate(action_vec):
             action_idx[action_code].append(i)
