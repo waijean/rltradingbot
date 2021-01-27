@@ -33,7 +33,7 @@ rl2.gamma = args.gamma
 rl2.momentum = args.momentum
 rl2.epsilon_decay = args.epsilondecay
 rl2.traindata = args.traindata
-rl2.job_dir=args.job_dir
+rl2.job_dir = args.job_dir
 
-#rl2.run(args.mode, args.episodes)
-rl2.run("train", 100)
+rl2.run(args.mode, args.episodes)
+#rl2.run("train", 100)
