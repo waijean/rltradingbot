@@ -4,12 +4,14 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import argparse
 import pickle
+import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 
 from agent import DQNAgent
 from environment import MultiStockEnv
 from utils import maybe_make_dir, get_data
+import seaborn as sns
 
 
 def get_scaler(env):
@@ -51,13 +53,28 @@ if __name__ == "__main__":
     # config
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
-    num_episodes = 1
+    #num_episodes = 100
     batch_size = 32
-    initial_investment = 5000
+    initial_investment = 20000
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-m", "--mode", type=str, required=True, help='either "train" or "test"'
+    )
+    parser.add_argument(
+        "-e", "--epsilon-decay", type=float, required=True, help='rate of epsilon decay'
+    )
+    parser.add_argument(
+        "-l", "--learnrate", type=float, required=True, help='learning rate'
+    )
+    parser.add_argument(
+        "-t", "--momentum", type=float, required=True, help='momentum'
+    )
+    parser.add_argument(
+        "-g", "--gamma", type=float, required=True, help='gamma'
+    )
+    parser.add_argument(
+        "-n", "--episodes", type=int, required=True, help='number of episodes'
     )
     args = parser.parse_args()
 
@@ -75,8 +92,9 @@ if __name__ == "__main__":
     env = MultiStockEnv(train_data, initial_investment)
     state_size = env.state_dim
     action_size = len(env.action_space)
-    agent = DQNAgent(state_size, action_size)
+    agent = DQNAgent(state_size, action_size, args.gamma, args.epsilon_decay, args.momentum, args.learnrate)
     scaler = get_scaler(env)
+    num_episodes = args.episodes
 
     # store the final value of the portfolio (end of episode)
     portfolio_value = []
@@ -117,11 +135,19 @@ if __name__ == "__main__":
 
         # plot losses
         plt.plot(agent.model.losses)
+        plt.title('Model Losses')
         plt.show()
-        plt.savefig(f"{models_folder}/model_losses.png")
+        #plt.savefig(f"{models_folder}/model_losses.png")
 
     # save portfolio value for each episode
     np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)
     plt.plot(portfolio_value)
+    plt.title('Portfolio value of episodes')
     plt.show()
-    plt.savefig(f"{rewards_folder}/portfolio_{args.mode}.png")
+    plt.savefig(f"{rewards_folder}/portfolio_{args.mode}_e{args.epsilon_decay}_l{args.learnrate}"
+                f"_m{args.momentum}_g{args.gamma}.png")
+
+    plt.hist(portfolio_value, bins=10)
+    plt.show()
+    plt.savefig(f"{rewards_folder}/portfoliohist_{args.mode}_e{args.epsilon_decay}_l{args.learnrate}"
+                f"_m{args.momentum}_g{args.gamma}.png")

@@ -1,16 +1,19 @@
 import numpy as np
-
+import argparse
 
 class LinearModel:
     """ A linear regression model """
 
-    def __init__(self, input_dim, n_action):
+    def __init__(self, input_dim, n_action, mmt, lr):
         self.W = np.random.randn(input_dim, n_action) / np.sqrt(input_dim)
         self.b = np.zeros(n_action)
 
         # momentum terms
         self.vW = 0
         self.vb = 0
+
+        self.learning_rate = lr
+        self.momentum = mmt
 
         self.losses = []
 
@@ -19,7 +22,7 @@ class LinearModel:
         assert len(X.shape) == 2
         return X.dot(self.W) + self.b
 
-    def sgd(self, X, Y, learning_rate=0.01, momentum=0.9):
+    def sgd(self, X, Y):
         # make sure X is N x D
         assert len(X.shape) == 2
 
@@ -37,8 +40,8 @@ class LinearModel:
         gb = 2 * (Yhat - Y).sum(axis=0) / num_values
 
         # update momentum terms
-        self.vW = momentum * self.vW - learning_rate * gW
-        self.vb = momentum * self.vb - learning_rate * gb
+        self.vW = self.momentum * self.vW - self.learning_rate * gW
+        self.vb = self.momentum * self.vb - self.learning_rate * gb
 
         # update params
         self.W += self.vW
@@ -57,14 +60,14 @@ class LinearModel:
 
 
 class DQNAgent(object):
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size, gamma, epsilon_decay, momentum, learnrate):
         self.state_size = state_size
         self.action_size = action_size
-        self.gamma = 0.95  # discount rate
+        self.gamma = gamma  # discount rate
         self.epsilon = 1.0  # exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
-        self.model = LinearModel(state_size, action_size)
+        self.epsilon_decay = epsilon_decay
+        self.model = LinearModel(state_size, action_size, momentum, learnrate)
 
     def act(self, state):
         if np.random.rand() <= self.epsilon:

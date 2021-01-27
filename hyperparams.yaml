@@ -1,0 +1,29 @@
+trainingInput:
+  scaleTier: BASIC
+  hyperparameters:
+    maxTrials: 40
+    maxParallelTrials: 5
+    enableTrialEarlyStopping: True
+    goal: MINIMIZE
+    hyperparameterMetricTag: mse
+    params:
+    - parameterName: epsilon_decay
+      type: DOUBLE
+      minValue: 0.5
+      maxValue: 0.995
+      scaleType: UNIT_LINEAR_SCALE
+    - parameterName: momentum
+      type: DOUBLE
+      minValue: 0.5
+      maxValue: 0.99
+      scaleType: UNIT_LINEAR_SCALE
+    - parameterName: learning_rate
+      type: DOUBLE
+      minValue: 0.001
+      maxValue: 0.1
+      scaleType: UNIT_LOG_SCALE
+    - parameterName: gamma
+      type: DOUBLE
+      minValue: 0.5
+      maxValue: 0.99
+      scaleType: UNIT_LINEAR_SCALE
