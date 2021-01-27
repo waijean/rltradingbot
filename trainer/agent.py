@@ -57,8 +57,9 @@ class LinearModel:
 
     def save_weights(self, filepath):
         #np.savez(filepath, W=self.W, b=self.b)
-        savefile = pd.DataFrame({'w':self.W, 'b':self.b})
-        savefile.to_csv(filepath)
+        pdW = pd.DataFrame.from_records(self.W).transpose()
+        pdb = pd.DataFrame(self.b)
+        pd.concat([pdW,pdb],axis=1).to_csv(filepath)
 
 
 class DQNAgent(object):
