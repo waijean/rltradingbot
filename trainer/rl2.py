@@ -129,7 +129,7 @@ def run(mode, episodes):
     plt.plot(portfolio_value)
     plt.title('Portfolio value of episodes')
     plt.show()
-    portfolio_value.to_csv(f"{job_dir}/linear.csv")
+    pd.DataFrame(portfolio_value).to_csv(f"{job_dir}/linear.csv")
     plt.savefig(f"{job_dir}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
                 f"_m{momentum}_g{gamma}.png")
 
