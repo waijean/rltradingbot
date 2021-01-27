@@ -122,17 +122,17 @@ def run(mode, episodes):
         plt.plot(agent.model.losses)
         plt.title('Model Losses')
         #plt.show()
-        plt.savefig(f"{job_dir}/model_losses.png")
+        #plt.savefig(f"{job_dir}/model_losses.png")
 
     # save portfolio value for each episode
-    np.save(f"{job_dir}/{mode}.npy", portfolio_value)
+    #np.save(f"{job_dir}/{mode}.npy", portfolio_value)
     plt.plot(portfolio_value)
     plt.title('Portfolio value of episodes')
     plt.show()
-    plt.savefig(f"{job_dir}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
-                f"_m{momentum}_g{gamma}.png")
+    #plt.savefig(f"{job_dir}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
+    #            f"_m{momentum}_g{gamma}.png")
 
     plt.hist(portfolio_value, bins=10)
     plt.show()
-    plt.savefig(f"{job_dir}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
-                f"_m{momentum}_g{gamma}.png")
+    #plt.savefig(f"{job_dir}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
+    #            f"_m{momentum}_g{gamma}.png")
