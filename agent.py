@@ -1,4 +1,8 @@
 import numpy as np
+import tensorflow as tf
+
+from tensorflow import keras
+from tensorflow.keras import layers
 
 
 class LinearModel:
@@ -56,15 +60,49 @@ class LinearModel:
         np.savez(filepath, W=self.W, b=self.b)
 
 
+class DLModel:
+    """ A deep learning model """
+
+    def __init__(self, input_dim, n_action, learning_rate=0.01, momentum=0.9):
+        self.model = tf.keras.Sequential(
+            [layers.Dense(units=input_dim, input_shape=(input_dim,)), layers.Dense(units=n_action),]
+        )
+
+        self.model.compile(
+            optimizer=tf.optimizers.SGD(learning_rate=learning_rate, momentum=momentum),
+            loss='mean_squared_error')
+
+    def predict(self, X):
+        # make sure X is (N x state_size)
+        assert len(X.shape) == 2
+        action = self.model.predict(X)
+        # make sure Y is (N x action_size)
+        assert len(action.shape) == 2
+        return action
+
+    def sgd(self, X, Y):
+        # make sure X is (N x state_size)
+        assert len(X.shape) == 2
+        # make sure Y is (N x action_size)
+        assert len(Y.shape) == 2
+        self.model.fit(X, Y, epochs=10)
+
+    def load_weights(self, filepath):
+        tf.keras.models.load_model(filepath)
+
+    def save_weights(self, filepath):
+        self.model.save(filepath)
+
+
 class DQNAgent(object):
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size, is_deep_learning:bool):
         self.state_size = state_size
         self.action_size = action_size
         self.gamma = 0.95  # discount rate
         self.epsilon = 1.0  # exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
-        self.model = LinearModel(state_size, action_size)
+        self.model = DLModel(state_size, action_size) if is_deep_learning else LinearModel(state_size, action_size)
 
     def act(self, state):
         if np.random.rand() <= self.epsilon:

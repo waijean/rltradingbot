@@ -57,6 +57,7 @@ if __name__ == "__main__":
     initial_investment = 20000
     n_stocks = 3
     n_inds = 0
+    is_deep_learning = False
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     state_size = env.state_dim
     action_size = len(env.action_space)
     print(f"State size: {state_size}, Action size: {action_size}")
-    agent = DQNAgent(state_size, action_size)
+    agent = DQNAgent(state_size, action_size, is_deep_learning=is_deep_learning)
     scaler = get_scaler(env)
 
     # store the final value of the portfolio (end of episode)
