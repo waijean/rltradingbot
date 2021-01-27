@@ -3,7 +3,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['numpy','sklearn','datetime','pandas','argparse','matplotlib']
+REQUIRED_PACKAGES = ['numpy','sklearn','datetime','pandas','argparse','matplotlib','gcsfs']
 
 setup(
     name='rltradingbot',
