@@ -67,7 +67,7 @@ if __name__ == "__main__":
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
 
-    data = get_data_from_yf()
+    data = get_data_from_yf(["AAPL","MSI","SBUX"], is_tech_ind=False)
     n_timesteps, cols = data.shape
     assert cols == n_stocks + n_inds, f"Expected {n_stocks + n_inds} but Actual {cols}"
 
