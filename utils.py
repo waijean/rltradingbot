@@ -46,10 +46,10 @@ def get_data_from_yf(stocks:List[str], is_tech_ind:bool):
     # sort columns (a quick hack so the Close Price will be the first s columns and technical indicators will be last)
     df = df[sorted(df.columns)]
 
-    return df.values
+    return df
 
 
-def get_data():
+def get_data(csv_name):
     """
     Returns: n x s ndarray where
     - n is the number of days
@@ -60,7 +60,7 @@ def get_data():
     1 = MSI
     2 = SBUX
     """
-    df = pd.read_csv("./aapl_msi_sbux.csv")
+    df = pd.read_csv(f"./{csv_name}.csv")
     return df.values
 
 
