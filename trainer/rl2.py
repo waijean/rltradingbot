@@ -111,7 +111,8 @@ def run(mode, episodes):
     # save the weights when we are done
     if mode == "train":
         # save the DQN
-        agent.save(f"{job_dir}/linear.npz")
+        #agent.save(f"{job_dir}/linear.npz")
+        agent.save(f"{job_dir}/linear.csv")
 
         # save the scaler
         with open(f"{job_dir}/scaler.pkl", "wb") as f:

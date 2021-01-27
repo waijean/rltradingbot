@@ -1,5 +1,5 @@
 import numpy as np
-import argparse
+import pandas as pd
 
 class LinearModel:
     """ A linear regression model """
@@ -56,7 +56,9 @@ class LinearModel:
         self.b = npz["b"]
 
     def save_weights(self, filepath):
-        np.savez(filepath, W=self.W, b=self.b)
+        #np.savez(filepath, W=self.W, b=self.b)
+        savefile = pd.DataFrame({'w':self.W, 'b':self.b})
+        savefile.to_csv(filepath)
 
 
 class DQNAgent(object):
