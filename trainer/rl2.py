@@ -18,6 +18,7 @@ learning_rate=None
 gamma=None
 momentum=None
 traindata=None
+job_dir=None
 
 
 def get_scaler(env):
@@ -56,14 +57,14 @@ def play_one_episode(agent, env, is_train, scaler):
 
 def run(mode, episodes):
     # config
-    models_folder = "linear_rl_trader_models"
-    rewards_folder = "linear_rl_trader_rewards"
+    #models_folder = "linear_rl_trader_models"
+    #rewards_folder = "linear_rl_trader_rewards"
     #num_episodes = 100
     #batch_size = 32
     initial_investment = 20000
 
-    maybe_make_dir(models_folder)
-    maybe_make_dir(rewards_folder)
+    #maybe_make_dir(models_folder)
+    #maybe_make_dir(rewards_folder)
 
     data = get_data(traindata)
     n_timesteps, n_stocks = data.shape
@@ -84,7 +85,7 @@ def run(mode, episodes):
 
     if mode == "test":
         # then load the previous scaler
-        with open(f"{models_folder}/scaler.pkl", "rb") as f:
+        with open(f"{job_dir}/scaler.pkl", "rb") as f:
             scaler = pickle.load(f)
 
         # remake the env with test data
@@ -95,7 +96,7 @@ def run(mode, episodes):
         agent.epsilon = 0.01
 
         # load trained weights
-        agent.load(f"{models_folder}/linear.npz")
+        agent.load(f"{job_dir}/linear.npz")
 
     # play the game num_episodes times
     for e in range(num_episodes):
@@ -110,27 +111,27 @@ def run(mode, episodes):
     # save the weights when we are done
     if mode == "train":
         # save the DQN
-        agent.save(f"{models_folder}/linear.npz")
+        agent.save(f"{job_dir}/linear.npz")
 
         # save the scaler
-        with open(f"{models_folder}/scaler.pkl", "wb") as f:
+        with open(f"{job_dir}/scaler.pkl", "wb") as f:
             pickle.dump(scaler, f)
 
         # plot losses
         plt.plot(agent.model.losses)
         plt.title('Model Losses')
         plt.show()
-        # plt.savefig(f"{models_folder}/model_losses.png")
+        plt.savefig(f"{job_dir}/model_losses.png")
 
     # save portfolio value for each episode
-    np.save(f"{rewards_folder}/{mode}.npy", portfolio_value)
+    np.save(f"{job_dir}/{mode}.npy", portfolio_value)
     plt.plot(portfolio_value)
     plt.title('Portfolio value of episodes')
     plt.show()
-    plt.savefig(f"{rewards_folder}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
+    plt.savefig(f"{job_dir}/portfolio_{mode}_e{epsilon_decay}_l{learning_rate}"
                 f"_m{momentum}_g{gamma}.png")
 
     plt.hist(portfolio_value, bins=10)
     plt.show()
-    plt.savefig(f"{rewards_folder}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
+    plt.savefig(f"{job_dir}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
                 f"_m{momentum}_g{gamma}.png")
