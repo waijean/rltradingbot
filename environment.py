@@ -23,10 +23,17 @@ class MultiStockEnv:
       - 4 = buy 1/2 shares
     """
 
-    def __init__(self, data, initial_investment=20000):
-        # data
-        self.stock_price_history = data
+    def __init__(self, stock_price_history, technical_ind, initial_investment=20000):
+        """
+        Args:
+            stock_price_history: (n, s) numpy ndarray which contains the stock price history where n is number of days and s is number of stocks.
+            technical_ind: (n, t) numpy ndarray which contains the technical indicators where t is the number of indicators
+            initial_investment:
+        """
+        self.stock_price_history = stock_price_history
+        self.technical_ind_history = technical_ind
         self.n_step, self.n_stock = self.stock_price_history.shape
+        _, self.n_ind = self.technical_ind_history.shape
 
         # instance attributes
         self.actions_dict = {
@@ -44,6 +51,7 @@ class MultiStockEnv:
         self.stock_owned = None
         self.stock_price = None
         self.cash_in_hand = None
+        self.technical_ind = None
 
         self.action_space = np.arange(self.n_actions ** self.n_stock)
 
@@ -64,7 +72,7 @@ class MultiStockEnv:
 
         self.action_counts = {}
         # calculate size of state
-        self.state_dim = self.n_stock * 2 + 1
+        self.state_dim = self.n_stock * 2 + 1 + self.n_ind
 
         self.reset()
 
@@ -74,6 +82,7 @@ class MultiStockEnv:
         self.stock_price = self.stock_price_history[self.cur_step]
         self.cash_in_hand = self.initial_investment
         self.action_counts = np.zeros(self.n_actions)
+        self.technical_ind = self.technical_ind_history[self.cur_step]
         return self._get_obs()
 
     def step(self, action):
@@ -113,7 +122,8 @@ class MultiStockEnv:
         obs = np.empty(self.state_dim)
         obs[: self.n_stock] = self.stock_owned
         obs[self.n_stock : 2 * self.n_stock] = self.stock_price
-        obs[-1] = self.cash_in_hand
+        obs[2 * self.n_stock] = self.cash_in_hand
+        obs[2 * self.n_stock + 1 :] = self.technical_ind_history[self.cur_step]
         return obs
 
     def _get_val(self):
