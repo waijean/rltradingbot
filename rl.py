@@ -49,7 +49,7 @@ def play_one_episode(agent, env, is_train):
 if __name__ == "__main__":
 
     # config
-    version = 1
+    version = "1_no_tech_indicators"
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
@@ -88,25 +88,25 @@ if __name__ == "__main__":
     
     if args.mode == "random":
         # remake the env with test data
-        env = MultiStockEnv(test_data, initial_investment)
+        env = MultiStockEnv(stock_price_history=test_data[:,:n_stocks], technical_ind=test_data[:, n_stocks:], initial_investment=initial_investment)
 
         # set epsilon to 1 so it's always in exploration
         agent.epsilon = 1
 
     if args.mode == "test":
         # then load the previous scaler
-        with open(f"{models_folder}/scaler.pkl", "rb") as f:
+        with open(f"{models_folder}/scaler_v{version}.pkl", "rb") as f:
             scaler = pickle.load(f)
 
         # remake the env with test data
-        env = MultiStockEnv(test_data, initial_investment)
+        env = MultiStockEnv(stock_price_history=test_data[:,:n_stocks], technical_ind=test_data[:, n_stocks:], initial_investment=initial_investment)
 
         # make sure epsilon is not 1!
         # no need to run multiple episodes if epsilon = 0, it's deterministic
         agent.epsilon = 0.01
 
         # load trained weights
-        agent.load(f"{models_folder}/linear.npz")
+        agent.load(f"{models_folder}/linear_v{version}.npz")
 
     # play the game num_episodes times
     for e in range(num_episodes):
@@ -121,10 +121,10 @@ if __name__ == "__main__":
     # save the weights when we are done
     if args.mode == "train":
         # save the DQN
-        agent.save(f"{models_folder}/linear.npz")
+        agent.save(f"{models_folder}/linear_v{version}.npz")
 
         # save the scaler
-        with open(f"{models_folder}/scaler.pkl", "wb") as f:
+        with open(f"{models_folder}/scaler_v{version}.pkl", "wb") as f:
             pickle.dump(scaler, f)
 
         # plot losses
