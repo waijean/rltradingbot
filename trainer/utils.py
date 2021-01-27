@@ -9,7 +9,7 @@ def get_data():
     # 1 = MSI
     # 2 = SBUX
     # Let's use AAPL (Apple), MSI (Motorola), SBUX (Starbucks)
-    df = pd.read_csv("aapl_msi_sbux.csv")
+    df = pd.read_csv("./aapl_msi_sbux.csv")
     return df.values
 
 
