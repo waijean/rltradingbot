@@ -4,10 +4,10 @@ trainingInput:
     maxTrials: 40
     maxParallelTrials: 1
     enableTrialEarlyStopping: True
-    goal: MINIMIZE
-    hyperparameterMetricTag: mse
+    goal: MAXIMIZE
+    hyperparameterMetricTag: portfolio_value_total
     params:
-    - parameterName: epsilon_decay
+    - parameterName: epsilondecay
       type: DOUBLE
       minValue: 0.5
       maxValue: 0.995
@@ -17,7 +17,7 @@ trainingInput:
       minValue: 0.5
       maxValue: 0.99
       scaleType: UNIT_LINEAR_SCALE
-    - parameterName: learning_rate
+    - parameterName: learnrate
       type: DOUBLE
       minValue: 0.001
       maxValue: 0.1
