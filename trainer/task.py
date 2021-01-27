@@ -1,5 +1,5 @@
 import argparse
-import rl2
+from . import rl2
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

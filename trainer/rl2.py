@@ -8,9 +8,9 @@ import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 
-from agent import DQNAgent
-from environment import MultiStockEnv
-from utils import maybe_make_dir, get_data
+from .agent import DQNAgent
+from .environment import MultiStockEnv
+from .utils import maybe_make_dir, get_data
 
 # task.py arguments
 epsilon_decay=None
