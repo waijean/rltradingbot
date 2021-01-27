@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 
 from agent import DQNAgent
 from environment import MultiStockEnv
-from utils import maybe_make_dir, get_data
+from utils import maybe_make_dir, get_data, get_data_from_yf
 
 
 def get_scaler(env):
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
 
-    data = get_data()
+    data = get_data_from_yf()
     n_timesteps, cols = data.shape
     assert cols == n_stocks + n_inds, f"Expected {n_stocks + n_inds} but Actual {cols}"
 
