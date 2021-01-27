@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 
 from agent import DQNAgent
 from environment import MultiStockEnv
-from utils import maybe_make_dir, get_data
+from utils import maybe_make_dir, get_data, get_data_from_yf
 
 
 def get_scaler(env):
@@ -49,11 +49,14 @@ def play_one_episode(agent, env, is_train):
 if __name__ == "__main__":
 
     # config
+    version = 1
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
     batch_size = 32
     initial_investment = 20000
+    n_stocks = 3
+    n_inds = 0
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -64,17 +67,19 @@ if __name__ == "__main__":
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
 
-    data = get_data()
-    n_timesteps, n_stocks = data.shape
+    data = get_data_from_yf(["AAPL","MSI","SBUX"], is_tech_ind=False)
+    n_timesteps, cols = data.shape
+    assert cols == n_stocks + n_inds, f"Expected {n_stocks + n_inds} but Actual {cols}"
 
     n_train = n_timesteps // 2
 
     train_data = data[:n_train]
     test_data = data[n_train:]
 
-    env = MultiStockEnv(train_data, initial_investment)
+    env = MultiStockEnv(stock_price_history=train_data[:,:n_stocks], technical_ind=train_data[:, n_stocks:], initial_investment=initial_investment)
     state_size = env.state_dim
     action_size = len(env.action_space)
+    print(f"State size: {state_size}, Action size: {action_size}")
     agent = DQNAgent(state_size, action_size)
     scaler = get_scaler(env)
 
@@ -127,4 +132,4 @@ if __name__ == "__main__":
         plt.show()
 
     # save portfolio value for each episode
-    np.save(f"{rewards_folder}/{args.mode}.npy", portfolio_value)
+    np.save(f"{rewards_folder}/{args.mode}_v{version}.npy", portfolio_value)
