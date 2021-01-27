@@ -138,5 +138,5 @@ def run(mode, episodes):
     #plt.savefig(f"{job_dir}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
     #            f"_m{momentum}_g{gamma}.png")
 
-    portfolio_value_total = portfolio_value.sum()
+    portfolio_value_total = sum(portfolio_value)
     print(portfolio_value_total)
