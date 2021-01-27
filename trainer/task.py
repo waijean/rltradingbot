@@ -20,6 +20,9 @@ parser.add_argument(
 parser.add_argument(
     "-n", "--episodes", type=int, required=True, help='number of episodes'
 )
+parser.add_argument(
+    "-j", "--job-dir", type=str, required=True, help='job directory'
+)
 args = parser.parse_args()
 
 rl2.learning_rate = args.learnrate
