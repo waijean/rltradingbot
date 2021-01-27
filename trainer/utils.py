@@ -2,14 +2,14 @@ import pandas as pd
 import os
 
 
-def get_data():
+def get_data(traindata):
     # returns a T x 3 list of stock prices
     # each row is a different stock
     # 0 = AAPL
     # 1 = MSI
     # 2 = SBUX
     # Let's use AAPL (Apple), MSI (Motorola), SBUX (Starbucks)
-    df = pd.read_csv("./aapl_msi_sbux.csv")
+    df = pd.read_csv(traindata)
     return df.values
 
 

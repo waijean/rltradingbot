@@ -23,12 +23,16 @@ parser.add_argument(
 parser.add_argument(
     "-j", "--job-dir", type=str, required=True, help='job directory'
 )
+parser.add_argument(
+    "-d", "--traindata", type=str, required=True, help='training data'
+)
 args = parser.parse_args()
 
 rl2.learning_rate = args.learnrate
 rl2.gamma = args.gamma
 rl2.momentum = args.momentum
 rl2.epsilon_decay = args.epsilondecay
+rl2.traindata = args.traindata
 
 #rl2.run(args.mode, args.episodes)
 rl2.run("train", 100)

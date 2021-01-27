@@ -17,6 +17,7 @@ epsilon_decay=None
 learning_rate=None
 gamma=None
 momentum=None
+traindata=None
 
 
 def get_scaler(env):
@@ -64,7 +65,7 @@ def run(mode, episodes):
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
 
-    data = get_data()
+    data = get_data(traindata)
     n_timesteps, n_stocks = data.shape
 
     n_train = n_timesteps // 2
