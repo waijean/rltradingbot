@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from .agent import DQNAgent
 from .environment import MultiStockEnv
 from .utils import maybe_make_dir, get_data
+import hypertune
 
 # task.py arguments
 epsilon_decay=None
@@ -138,5 +139,12 @@ def run(mode, episodes):
     #plt.savefig(f"{job_dir}/portfoliohist_{mode}_e{epsilon_decay}_l{learning_rate}"
     #            f"_m{momentum}_g{gamma}.png")
 
-    portfolio_value_total = sum(portfolio_value)
+    portfolio_value_total = sum(portfolio_value) / n_timesteps
     print(portfolio_value_total)
+
+    hpt = hypertune.HyperTune()
+    hpt.report_hyperparameter_tuning_metric(
+        hyperparameter_metric_tag='portfolio_value_total',
+        metric_value=portfolio_value_total,
+        global_step=1000
+    )

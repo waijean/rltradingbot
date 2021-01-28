@@ -36,4 +36,6 @@ rl2.traindata = args.traindata
 rl2.job_dir = args.job_dir
 
 rl2.run(args.mode, args.episodes)
+#rl2.run("train", args.episodes)
+#rl2.run("test", args.episodes)
 #rl2.run("train", 100)

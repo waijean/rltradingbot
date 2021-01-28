@@ -2,7 +2,7 @@ trainingInput:
   scaleTier: BASIC
   hyperparameters:
     maxTrials: 40
-    maxParallelTrials: 1
+    maxParallelTrials: 4
     enableTrialEarlyStopping: True
     goal: MAXIMIZE
     hyperparameterMetricTag: portfolio_value_total
