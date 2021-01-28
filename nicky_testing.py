@@ -18,12 +18,12 @@ from stockstats import StockDataFrame as Sdf
 
 gcp_hack = ['aapl', 'msi', 'sbux']
 
-data_df = YahooDownloader(start_date = '2015-01-01',
-                          end_date = '2021-12-01',
+data_df = YahooDownloader(start_date = '2013-02-01',
+                          end_date = '2017-02-01',
                           ticker_list = gcp_hack).fetch_data()
 data_df.head()
 
-tech_indicator_list = ['macd', 'rsi_30', 'cci_30', 'dx_30']
+tech_indicator_list = ['macd', 'rsi_10', 'wr_10']
 
 def add_technical_indicator(data, tech_indicator_list):
         """
@@ -31,7 +31,7 @@ def add_technical_indicator(data, tech_indicator_list):
         use stockstats package to add technical inidactors
         :param data: (df) pandas dataframe
         :return: (df) pandas dataframe
-        """
+        """1
         df = data.copy()
         stock = Sdf.retype(df.copy())
         unique_ticker = stock.tic.unique()
@@ -51,3 +51,12 @@ def add_technical_indicator(data, tech_indicator_list):
         return df
 
 data_t = add_technical_indicator(data_df, tech_indicator_list)
+
+comb_df2 = data_t.pivot_table(
+    index='date',columns=['tic'],values=[
+        'close','macd', 'rsi_10', 'wr_10'])
+
+comb_df2.columns = list(map("_".join, comb_df2.columns))
+
+comb_df2.to_csv('stock_w_ind')
+
