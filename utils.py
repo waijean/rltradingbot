@@ -60,7 +60,7 @@ def get_data():
     1 = MSI
     2 = SBUX
     """
-    df = pd.read_csv("./aapl_msi_sbux.csv")
+    df = pd.read_csv("./stock_w_ind.csv")
     return df.values
 
 
