@@ -6,13 +6,10 @@ import itertools
 class MultiStockEnv:
     """
     A 3-stock trading environment.
-    State: vector of size 7 (n_stock * 2 + 1)
+    State: vector of size 4 (n_stock + 1)
       - # shares of stock 1 owned
       - # shares of stock 2 owned
       - # shares of stock 3 owned
-      - price of stock 1 (using daily close price)
-      - price of stock 2
-      - price of stock 3
       - cash owned (can be used to purchase more stocks)
     Action: categorical variable with 27 (3^3) possibilities
       - for each stock, you can:
@@ -59,7 +56,7 @@ class MultiStockEnv:
         )
 
         # calculate size of state
-        self.state_dim = self.n_stock * 2 + 1 + self.n_ind
+        self.state_dim = self.n_stock + 1 + self.n_ind
 
         self.reset()
 
@@ -102,9 +99,8 @@ class MultiStockEnv:
     def _get_obs(self):
         obs = np.empty(self.state_dim)
         obs[: self.n_stock] = self.stock_owned
-        obs[self.n_stock : 2 * self.n_stock] = self.stock_price
-        obs[2 * self.n_stock] = self.cash_in_hand
-        obs[2 * self.n_stock + 1 :] = self.technical_ind_history[self.cur_step]
+        obs[self.n_stock] = self.cash_in_hand
+        obs[self.n_stock + 1 :] = self.technical_ind_history[self.cur_step]
         return obs
 
     def _get_val(self):
