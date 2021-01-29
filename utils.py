@@ -22,14 +22,14 @@ def get_data_from_yf(stocks:List[str], is_tech_ind:bool):
     """
     df = pd.DataFrame()
     for stock in stocks:  # :
-        stock_df = yf.download(stock, start="2015-02-01", end="2020-02-01")
+        stock_df = yf.download(stock, start="2013-02-01", end="2017-02-01")
         stock_sdf = StockDataFrame.retype(stock_df)
         if is_tech_ind:
             # create technical indicators
-            stock_df['rsi_30'] = pd.DataFrame(stock_sdf['rsi_30'], index=stock_df.index)
+            stock_df['rsi_10'] = pd.DataFrame(stock_sdf['rsi_10'], index=stock_df.index)
             stock_df['macd'] = pd.DataFrame(stock_sdf['macd'], index=stock_df.index)
             stock_df['wr_10'] = pd.DataFrame(stock_sdf['wr_10'], index=stock_df.index)
-            stock_df = stock_df[['close', 'rsi_30', 'macd', 'wr_10']]
+            stock_df = stock_df[['close', 'rsi_10', 'macd', 'wr_10']]
         else:
             # just get the close price
             stock_df = stock_df[["close"]]

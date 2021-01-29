@@ -19,7 +19,7 @@ import pickle
 
 from sklearn.preprocessing import StandardScaler
 
-# from agent import DQNAgent
+# from agent_NN import DQNAgent
 from agent import DQNAgent
 
 from environment import MultiStockEnv
@@ -63,7 +63,7 @@ def play_one_episode(agent, env, is_train):
 if __name__ == "__main__":
 
     # config
-    version = "nn_4_w_tech_indicators"
+    version = "10_6_w_tech_indicators"
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
