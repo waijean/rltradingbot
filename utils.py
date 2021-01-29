@@ -3,9 +3,11 @@ from typing import List
 import pandas as pd
 import yfinance as yf
 import os
+from stockstats import StockDataFrame
 
 
 def get_data_from_yf(stocks:List[str], is_tech_ind:bool):
+
     """
     Download stock prices from yahoo finance API
 
@@ -20,16 +22,17 @@ def get_data_from_yf(stocks:List[str], is_tech_ind:bool):
     """
     df = pd.DataFrame()
     for stock in stocks:  # :
-        stock_df = yf.download(stock, start="2015-01-01", end="2020-03-20")
-
+        stock_df = yf.download(stock, start="2015-02-01", end="2020-02-01")
+        stock_sdf = StockDataFrame.retype(stock_df)
         if is_tech_ind:
             # create technical indicators
-            stock_df = stock_df[["Open","Close"]]
-            stock_df = stock_df.assign(Diff=stock_df["Close"] - stock_df["Open"])
-            stock_df.drop(columns=["Open"],inplace =True)
+            stock_df['rsi_30'] = pd.DataFrame(stock_sdf['rsi_30'], index=stock_df.index)
+            stock_df['macd'] = pd.DataFrame(stock_sdf['macd'], index=stock_df.index)
+            stock_df['wr_10'] = pd.DataFrame(stock_sdf['wr_10'], index=stock_df.index)
+            stock_df = stock_df[['close', 'rsi_30', 'macd', 'wr_10']]
         else:
             # just get the close price
-            stock_df = stock_df[["Close"]]
+            stock_df = stock_df[["close"]]
 
         # add stock prefix to column names
         colnames = [col + "_" + stock for col in stock_df.columns]
@@ -45,9 +48,9 @@ def get_data_from_yf(stocks:List[str], is_tech_ind:bool):
 
     # sort columns (a quick hack so the Close Price will be the first s columns and technical indicators will be last)
     df = df[sorted(df.columns)]
+    df = df.iloc[1:,]
 
-    return df.values
-
+    return df.to_numpy()
 
 def get_data():
     """

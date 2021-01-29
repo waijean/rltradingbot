@@ -1,5 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import random
+
+# from collections import deque
+# import tensorflow as tf
+
+# from tensorflow.python.keras.layers import Input, Dense, Dropout
+# from tensorflow.python.keras.models import Sequential
+# from tensorflow.python.keras.optimizers import Adam
+# from tensorflow.python.keras.optimizer_v1 import Optimizer
+# from tensorflow.python.keras import optimizers
+
 
 from datetime import datetime
 import argparse
@@ -7,7 +19,9 @@ import pickle
 
 from sklearn.preprocessing import StandardScaler
 
+# from agent import DQNAgent
 from agent import DQNAgent
+
 from environment import MultiStockEnv
 from utils import maybe_make_dir, get_data, get_data_from_yf
 
@@ -49,14 +63,14 @@ def play_one_episode(agent, env, is_train):
 if __name__ == "__main__":
 
     # config
-    version = "1_no_tech_indicators"
+    version = "nn_4_w_tech_indicators"
     models_folder = "linear_rl_trader_models"
     rewards_folder = "linear_rl_trader_rewards"
     num_episodes = 2000
     batch_size = 32
     initial_investment = 20000
     n_stocks = 3
-    n_inds = 0
+    n_inds = 9
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -67,7 +81,9 @@ if __name__ == "__main__":
     maybe_make_dir(models_folder)
     maybe_make_dir(rewards_folder)
 
-    data = get_data_from_yf(["AAPL","MSI","SBUX"], is_tech_ind=False)
+    # data = get_data()
+    data = get_data_from_yf(["AAPL","MSI","SBUX"], is_tech_ind=True)
+
     n_timesteps, cols = data.shape
     assert cols == n_stocks + n_inds, f"Expected {n_stocks + n_inds} but Actual {cols}"
 
@@ -133,3 +149,4 @@ if __name__ == "__main__":
 
     # save portfolio value for each episode
     np.save(f"{rewards_folder}/{args.mode}_v{version}.npy", portfolio_value)
+
